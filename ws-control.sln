@@ -5,6 +5,14 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ws-control", "ws-control\ws-control.csproj", "{EE6E1A98-7874-448A-AC33-408C90D9C152}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3Data", "3Data", "{5921530E-B247-4FAB-BD83-904EDD99EE2E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2Business", "2Business", "{44A0F28D-F50D-482B-880A-695A6BD7F331}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1UI", "1UI", "{5D61BE17-FE32-49C7-9604-169FE28CAFB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataExtractor", "DataExtractor\DataExtractor.csproj", "{B6B7E935-5664-484A-84B0-6E2FBC7F7782}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +23,17 @@ Global
 		{EE6E1A98-7874-448A-AC33-408C90D9C152}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6E1A98-7874-448A-AC33-408C90D9C152}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6E1A98-7874-448A-AC33-408C90D9C152}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6B7E935-5664-484A-84B0-6E2FBC7F7782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6B7E935-5664-484A-84B0-6E2FBC7F7782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6B7E935-5664-484A-84B0-6E2FBC7F7782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6B7E935-5664-484A-84B0-6E2FBC7F7782}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EE6E1A98-7874-448A-AC33-408C90D9C152} = {5D61BE17-FE32-49C7-9604-169FE28CAFB1}
+		{B6B7E935-5664-484A-84B0-6E2FBC7F7782} = {5921530E-B247-4FAB-BD83-904EDD99EE2E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {84852307-6D59-425D-BD8C-9F250ED78374}
