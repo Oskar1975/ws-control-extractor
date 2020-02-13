@@ -1,4 +1,5 @@
-﻿using System;
+﻿//using Oracle.DataAccess.Client;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,7 +15,7 @@ namespace DataExtractor.Common
         #region Constructor
         public cConector()
         {
-            con = new OracleConnection(ConfigurationManager.ConnectionStrings["SQL"] != null ? ConfigurationManager.ConnectionStrings["SQL"].ConnectionString : "");
+            con = new OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.7.39.127)(PORT=1648)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TVFISCALD)));User Id=XXFM;Password=Mandalorian_KAZ_2020");
             noFilasAfect = new int();
         }
         #endregion
@@ -34,40 +35,6 @@ namespace DataExtractor.Common
         #endregion
 
         #region Metodo publicos
-
-        internal DataTable getDataTable(string query, Dictionary<String, Object> keyValueParam = null)
-        {
-            try
-            {
-                com = new OracleCommand(query, con);
-                com.CommandType = System.Data.CommandType.Text;
-                if (keyValueParam != null)
-                {
-                    foreach (KeyValuePair<String, Object> kvp in keyValueParam)
-                    {
-                        if (query.Contains(kvp.Key))
-                            com.Parameters.AddWithValue(kvp.Key, kvp.Value != null ? kvp.Value.ToString() : "");
-                    }
-                }
-
-                da = new OracleDataAdapter(com);
-                dt = new DataTable();
-                con.Open();
-                da.Fill(dt);
-                if (dt != null)
-                {
-                    if (dt.Rows.Count >= 1)
-                        return dt;
-                    else
-                        return null;
-                }
-                else { return null; }
-
-
-            }
-            catch (Exception ex) { return null; ; }
-            finally { con.Close(); }
-        }
 
         #endregion
     }

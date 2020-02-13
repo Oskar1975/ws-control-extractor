@@ -19,8 +19,7 @@ namespace ws_control.Servicios_Web
 
         [WebMethod]
         public string HelloWorld()
-        {
-            
+        {            
             return "hola";
         }
     }

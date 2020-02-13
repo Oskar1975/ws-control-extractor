@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://xmlns.mx.com.televisa/OIC/Utility" xmlns:plnk="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:inp1="http://xlmns.mx.com.televisa/UtilService/Core/FusionCompanies/V1" name="FusionCompanies" targetNamespace="http://xmlns.mx.com.televisa/OIC/Utility" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" wsu:Id="wss_http_token_or_jwt_token_service_policy">
+    <wsp:ExactlyOne>
+      <wsp:All />
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <osp:HttpToken xmlns:osp="http://schemas.oracle.com/ws/2012/01/wssecuritypolicy">
+                  <wsp:Policy>
+                    <osp:HttpJwtAuthentication />
+                  </wsp:Policy>
+                </osp:HttpToken>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Lax />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema>
+      <xsd:import schemaLocation="https://OIDevOICS-eivjinterop.integration.ocp.oraclecloud.com:443/ic/ws/integration/v1/flows/soap/FUSIONCOMPANIES/1.0?SCHEMA%2F%2ForacleinternalicsFUSIONCOMPANIES_01%2FResources%2Fresources%2Fapplication_8%2Foutbound_9%2Fresourcegroup_10%2FFusionCompanies.5406.xsd" namespace="http://xlmns.mx.com.televisa/UtilService/Core/FusionCompanies/V1" />
+    </xsd:schema>
+    <xs:schema xmlns="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" elementFormDefault="qualified" targetNamespace="http://xmlns.oracle.com/ics/tracking/ics_tracking_context.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="ics_tracking_context">
+        <xs:annotation>
+          <xs:documentation>ICS Tracking Context Schema</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="tracking_property" type="TrackingPropertyType" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="TrackingPropertyType">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" />
+          <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+    <xs:schema xmlns="http://xmlns.oracle.com/procmon" elementFormDefault="qualified" targetNamespace="http://xmlns.oracle.com/procmon" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="ics_insight_context">
+        <xs:annotation>
+          <xs:documentation>Insight Context Schema</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="insight_property" type="InsightPropertyType" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="InsightPropertyType">
+        <xs:sequence>
+          <xs:element name="name" type="xs:string" />
+          <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="requestMessage">
+    <wsdl:part name="Request" element="inp1:GetFusionCompaniesReqMsg" />
+  </wsdl:message>
+  <wsdl:message name="replyMessage">
+    <wsdl:part name="Response" element="inp1:GetFusionCompaniesRspMsg" />
+  </wsdl:message>
+  <wsdl:portType name="FusionCompaniesService_FusionCompaniesTrigger_REQUEST">
+    <wsdl:operation name="GetFusionCompanies">
+      <wsdl:input message="tns:requestMessage" />
+      <wsdl:output message="tns:replyMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="FusionCompaniesService_FusionCompaniesTrigger_REQUEST_binding" type="tns:FusionCompaniesService_FusionCompaniesTrigger_REQUEST">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#wss_http_token_or_jwt_token_service_policy" wsdl:required="false" />
+    <wsdl:operation name="GetFusionCompanies">
+      <soap:operation soapAction="GetFusionCompanies" />
+      <wsdl:input>
+        <soap:body use="literal" parts="Request" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" parts="Response" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="FusionCompanies">
+    <wsdl:port name="FusionCompaniesService_FusionCompaniesTrigger_REQUEST_pt" binding="tns:FusionCompaniesService_FusionCompaniesTrigger_REQUEST_binding">
+      <soap:address location="https://OIDevOICS-eivjinterop.integration.ocp.oraclecloud.com:443/ic/ws/integration/v1/flows/soap/FUSIONCOMPANIES/1.0/" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
