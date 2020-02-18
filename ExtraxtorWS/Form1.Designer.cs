@@ -28,20 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.btnConectar = new System.Windows.Forms.Button();
             this.grdEmpresa = new System.Windows.Forms.DataGridView();
+            this.btnConsultarEmp = new System.Windows.Forms.Button();
+            this.txtClave = new System.Windows.Forms.TextBox();
+            this.btnFusionCompanies = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.grdEmpresa)).BeginInit();
             this.SuspendLayout();
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(12, 239);
-            this.textBox2.Multiline = true;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(776, 199);
-            this.textBox2.TabIndex = 1;
             // 
             // button1
             // 
@@ -49,7 +43,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(186, 52);
             this.button1.TabIndex = 2;
-            this.button1.Text = "button1";
+            this.button1.Text = "Mostrar empresas";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -66,20 +60,49 @@
             // grdEmpresa
             // 
             this.grdEmpresa.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grdEmpresa.Location = new System.Drawing.Point(44, 464);
+            this.grdEmpresa.Location = new System.Drawing.Point(44, 348);
             this.grdEmpresa.Name = "grdEmpresa";
-            this.grdEmpresa.Size = new System.Drawing.Size(717, 196);
+            this.grdEmpresa.Size = new System.Drawing.Size(717, 312);
             this.grdEmpresa.TabIndex = 4;
+            // 
+            // btnConsultarEmp
+            // 
+            this.btnConsultarEmp.Location = new System.Drawing.Point(389, 163);
+            this.btnConsultarEmp.Name = "btnConsultarEmp";
+            this.btnConsultarEmp.Size = new System.Drawing.Size(177, 52);
+            this.btnConsultarEmp.TabIndex = 5;
+            this.btnConsultarEmp.Text = "Consulta empresa";
+            this.btnConsultarEmp.UseVisualStyleBackColor = true;
+            this.btnConsultarEmp.Click += new System.EventHandler(this.btnConsultarEmp_Click);
+            // 
+            // txtClave
+            // 
+            this.txtClave.Location = new System.Drawing.Point(143, 194);
+            this.txtClave.Name = "txtClave";
+            this.txtClave.Size = new System.Drawing.Size(207, 20);
+            this.txtClave.TabIndex = 6;
+            // 
+            // btnFusionCompanies
+            // 
+            this.btnFusionCompanies.Location = new System.Drawing.Point(389, 276);
+            this.btnFusionCompanies.Name = "btnFusionCompanies";
+            this.btnFusionCompanies.Size = new System.Drawing.Size(177, 34);
+            this.btnFusionCompanies.TabIndex = 7;
+            this.btnFusionCompanies.Text = "FusionCompanies";
+            this.btnFusionCompanies.UseVisualStyleBackColor = true;
+            this.btnFusionCompanies.Click += new System.EventHandler(this.btnFusionCompanies_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(796, 672);
+            this.Controls.Add(this.btnFusionCompanies);
+            this.Controls.Add(this.txtClave);
+            this.Controls.Add(this.btnConsultarEmp);
             this.Controls.Add(this.grdEmpresa);
             this.Controls.Add(this.btnConectar);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Form1";
@@ -90,11 +113,12 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnConectar;
         private System.Windows.Forms.DataGridView grdEmpresa;
+        private System.Windows.Forms.Button btnConsultarEmp;
+        private System.Windows.Forms.TextBox txtClave;
+        private System.Windows.Forms.Button btnFusionCompanies;
     }
 }
 

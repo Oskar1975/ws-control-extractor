@@ -17,5 +17,10 @@ namespace BusiExtractor
         {
             return empresaData.ListadoEmpresa();
         }
+
+        public List<bEntiEmpresa> ConsultaEmpresa(string cve_ambiente)
+        {
+            return empresaData.ConsultaEmpresa(cve_ambiente);
+        }
     }
 }

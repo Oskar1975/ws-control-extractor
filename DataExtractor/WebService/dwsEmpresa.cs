@@ -96,5 +96,38 @@ namespace DataExtractor.WebService
             }
             return lst;
         }
+
+        public List<bEntiEmpresa> ConsultaEmpresa(string cve_ambiente)
+        {
+            List<bEntiEmpresa> lst = new List<bEntiEmpresa>();
+            try
+            {
+                con.Open();
+                com = new OracleCommand("Select ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA From XXFM_CONF_CAT_OBJS_TAB Where UPPER(CVE_AMBIENTE) LIKE UPPER('"+ cve_ambiente +"')", con);
+                OracleDataReader dr = com.ExecuteReader();
+
+                while (dr.Read())
+                {
+                    bEntiEmpresa empresaEnti = new bEntiEmpresa();
+                    empresaEnti.ID_CATOBJETOS = Convert.ToInt32(dr["ID_CATOBJETOS"]);
+                    empresaEnti.CVE_CEDULA = dr["CVE_CEDULA"].ToString();
+                    empresaEnti.ID_DATOSE = Convert.ToDecimal(dr["ID_DATOSE"]);
+                    empresaEnti.NOMB_OBJETO = dr["NOMB_OBJETO"].ToString();
+                    empresaEnti.CVE_AMBIENTE = dr["CVE_AMBIENTE"].ToString();
+                    empresaEnti.OBJETO = dr["OBJETO"].ToString();
+                    empresaEnti.COD_ESTATUS = dr["COD_ESTATUS"].ToString();
+                    empresaEnti.USUARIO = dr["USUARIO"].ToString();
+                    empresaEnti.FECHA_ALTA = Convert.ToDateTime(dr["FECHA_ALTA"]);
+
+                    lst.Add(empresaEnti);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return lst;
+        }
     }
 }

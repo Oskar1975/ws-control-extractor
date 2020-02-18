@@ -51,10 +51,44 @@ namespace ExtraxtorWS
             }
             catch (OracleException ex)
             {
-                throw new Exception("Error en la conexion", ex);
+                throw new Exception("Error en la conexion", ex); 
             }
         }
 
-       
+        private void btnConsultarEmp_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                bBusiExtractor obj = new bBusiExtractor();
+
+                grdEmpresa.DataSource = obj.ConsultaEmpresa(txtClave.Text);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            
+        }
+
+        private void btnFusionCompanies_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                servicieCompanies.GetFusionCompaniesReqMsgType messageType = new servicieCompanies.GetFusionCompaniesReqMsgType();
+                servicieCompanies.GetFusionCompaniesReqMsgType response = new servicieCompanies.GetFusionCompaniesReqMsgType();
+                servicieCompanies.FusionCompaniesService_FusionCompaniesTrigger_REQUESTClient ws = new servicieCompanies.FusionCompaniesService_FusionCompaniesTrigger_REQUESTClient();
+
+                messageType.Input = string.Empty;
+                System.Net.ICredentials cred = new System.Net.NetworkCredential("jamartinez@televisa.com.mx", "J0rg3_12345#");
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
