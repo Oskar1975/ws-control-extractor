@@ -19,7 +19,7 @@ namespace DataExtractor.WebService
             {
                 dt = new DataTable();
                 string selectEmpresa = "SELECT ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA FROM XXFM_CONF_CAT_OBJS_TAB";
-                com = new OracleCommand(selectEmpresa, con);
+                com = new OracleCommand(selectEmpresa, conTVFISCALD);
                 da = new OracleDataAdapter(com);
                 da.Fill(dt);
                 return dt;
@@ -35,9 +35,9 @@ namespace DataExtractor.WebService
         {
             try
             {
-                using (con)
+                using (conTVFISCALD)
                 {
-                    con.Open();
+                    conTVFISCALD.Open();
                     using (com)
                     {
                         if (parameters != null && parameters.Count > 0)
@@ -55,7 +55,7 @@ namespace DataExtractor.WebService
             }
             catch (Exception ex)
             {
-                con.Close();
+                conTVFISCALD.Close();
                 throw new Exception("No se logro conectar a la BD", ex);
             }
         }
@@ -69,8 +69,8 @@ namespace DataExtractor.WebService
             List<bEntiEmpresa> lst = new List<bEntiEmpresa>();
             try
             {
-                con.Open();
-                com = new OracleCommand("SELECT ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA FROM XXFM_CONF_CAT_OBJS_TAB", con);
+                conTVFISCALD.Open();
+                com = new OracleCommand("SELECT ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA FROM XXFM_CONF_CAT_OBJS_TAB", conTVFISCALD);
                 OracleDataReader dr = com.ExecuteReader();
 
                 while (dr.Read())
@@ -102,8 +102,8 @@ namespace DataExtractor.WebService
             List<bEntiEmpresa> lst = new List<bEntiEmpresa>();
             try
             {
-                con.Open();
-                com = new OracleCommand("Select ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA From XXFM_CONF_CAT_OBJS_TAB Where UPPER(CVE_AMBIENTE) LIKE UPPER('"+ cve_ambiente +"')", con);
+                conTVFISCALD.Open();
+                com = new OracleCommand("Select ID_CATOBJETOS, CVE_CEDULA, ID_DATOSE, NOMB_OBJETO, CVE_AMBIENTE, OBJETO, COD_ESTATUS, USUARIO, FECHA_ALTA From XXFM_CONF_CAT_OBJS_TAB Where UPPER(CVE_AMBIENTE) LIKE UPPER('"+ cve_ambiente +"')", conTVFISCALD);
                 OracleDataReader dr = com.ExecuteReader();
 
                 while (dr.Read())
