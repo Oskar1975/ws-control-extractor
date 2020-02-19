@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="https://oidevoics-eivjinterop.integration.ocp.oraclecloud.com/ic/ws/integration/v1/flows/soap/FUSIONCOMPANIES/1.0/?wsdl" filename="FusionCompanies.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="https://oidevoics-eivjinterop.integration.ocp.oraclecloud.com/ic/ws/integration/v1/flows/soap/FUSIONCOMPANIES/1.0/?SCHEMA%2F%2ForacleinternalicsFUSIONCOMPANIES_01%2FResources%2Fresources%2Fapplication_8%2Foutbound_9%2Fresourcegroup_10%2FFusionCompanies.5406.xsd" filename="item.xsd" />
+  </Results>
+</DiscoveryClientResultsFile>
