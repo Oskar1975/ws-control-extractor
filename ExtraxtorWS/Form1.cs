@@ -104,5 +104,50 @@ namespace ExtraxtorWS
                 throw ex;
             }
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            //--/ Este es el procedimiento ciclico'
+
+            // - YA debes tener una cadena de conexion desencriptada
+            // - ir a revisar si existe una extraccion pendiente XXFM.XXFM_INT_CONF_EXT_TAB  (paquete) --> Count()
+            //datatable dtExtracciones as databale()
+            // dtExtracciones = getObtenerExtracciones(XXFM_INT_CONF_EXT_TAB);
+
+            try
+            {
+                //if (dtExtracciones.count() > 0)
+                //{
+
+                //    // - Obtener empresas programadas en el aextraccion XXFM_INT_CONFE_EMP_TAB
+                //    //DateTable dtEmpresas as Datatable()
+                //    for (int i = 0; i < dtExtracciones.count(); i++)
+                //    {
+
+                //        //dtEmpresas = getEmpresasExtraccion(dtExtracciones.row(1).columna(idExtraccion).toString());
+
+
+
+
+                //    }
+
+
+                //}
+                //else
+                //{
+
+                //}
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+        }
+
+
     }
 }
