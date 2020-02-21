@@ -15,7 +15,7 @@ namespace DataExtractor.Common
         #region Constructor
         public cConector()
         {
-            conTVFISCALD = new OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.7.39.127)(PORT=1648)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TVFISCALD)));User Id=XXFM;Password=Mandalorian_KAZ_2020");
+            conTVFISCALD = new OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=LOCALHOST)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=ORAPREQA)));User Id=XXFM;Password=sistesur");
             noFilasAfect = new int();
 
             conTVDEV = new OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.45.122)(PORT=1528)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=TVDEV)));User Id=XXFM;Password=DEV_M_TVD3V618hbxw");
@@ -40,7 +40,7 @@ namespace DataExtractor.Common
         protected OracleConnection conTVINTDES;
         protected OracleConnection conWEB;
         protected OracleDataAdapter da;
-        protected OracleCommand com;
+        protected IDbCommand com;
 
         public int? noFilasAfect;
 
