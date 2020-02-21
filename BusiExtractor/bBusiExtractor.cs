@@ -22,5 +22,10 @@ namespace BusiExtractor
         {
             return empresaData.ConsultaEmpresa(cve_ambiente);
         }
+
+        public List<bEntiDatoEntrada> ListadoDatosEntrada()
+        {
+            return empresaData.ListadoDatosEntrada();
+        }
     }
 }

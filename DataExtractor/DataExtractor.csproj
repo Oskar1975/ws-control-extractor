@@ -58,6 +58,10 @@
       <Project>{deae789c-4f30-44fd-8447-72acf6da8e59}</Project>
       <Name>EntiExtractor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WSFussionCompanie\WSFussionCompanie.csproj">
+      <Project>{9708a69e-09a8-4670-94ea-0fa79033ed64}</Project>
+      <Name>WSFussionCompanie</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
