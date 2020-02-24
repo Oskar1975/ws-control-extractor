@@ -53,6 +53,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataExtractor\DataExtractor.csproj">
+      <Project>{b6b7e935-5664-484a-84b0-6e2fbc7f7782}</Project>
+      <Name>DataExtractor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EntiExtractor\EntiExtractor.csproj">
       <Project>{deae789c-4f30-44fd-8447-72acf6da8e59}</Project>
       <Name>EntiExtractor</Name>

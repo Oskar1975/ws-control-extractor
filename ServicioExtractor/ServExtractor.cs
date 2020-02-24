@@ -1,4 +1,5 @@
-﻿using EntiExtractor;
+﻿using DataExtractor.Common;
+using EntiExtractor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,7 @@ namespace ServicioExtractor
 
         #region "Variables"
 
+        private cSecurity cSecure;
         private object poTablaLock; 
         private Timer Tmrprincipal;
         private bool PuedeProcesarTimer;
@@ -556,10 +558,11 @@ namespace ServicioExtractor
             string lsCadenaCon = String.Empty;
             bool lbRetval = true;
             string lsAmbiente = "";
+            cSecure = new cSecurity();
 
             try
             {
-                lsCadenaCon = getConnString(lsAmbiente);
+                lsCadenaCon = cSecure.getConnection("","");
                 toConexion = new OracleConnection(lsCadenaCon);
             }
             catch (InvalidOperationException ex)
@@ -590,12 +593,13 @@ namespace ServicioExtractor
             string lsCadenaCon = String.Empty;
             bool lbRetval = true;
             string lsAmbiente = String.Empty;
+            cSecure = new cSecurity();
 
             try
             {
                 //Validamos las conexiones a FiscalX
                 lsAmbiente = "ORAPREQA";
-                lsCadenaCon = getConnString(lsAmbiente);
+                lsCadenaCon = cSecure.getConnection("",lsAmbiente);
                 OracleConnection loConexion = new OracleConnection(lsCadenaCon);
 
                 loConexion.Open();
@@ -603,7 +607,7 @@ namespace ServicioExtractor
 
                 // Validamos las conexiones a TV
                 lsAmbiente = "TVQA";
-                lsCadenaCon = getConnString(lsAmbiente);
+                lsCadenaCon = cSecure.getConnection("", lsAmbiente);
                 loConexion = new OracleConnection(lsCadenaCon);
 
                 loConexion.Open();
@@ -611,7 +615,7 @@ namespace ServicioExtractor
 
                 // Validamos las conexiones a TVMEX
                 lsAmbiente = "TVMEXQA";
-                lsCadenaCon = getConnString(lsAmbiente);
+                lsCadenaCon = cSecure.getConnection("", lsAmbiente);
                 loConexion = new OracleConnection(lsCadenaCon);
 
                 loConexion.Open();
@@ -694,150 +698,6 @@ namespace ServicioExtractor
                 psMsgError = "EN_EJECUCION_DEL_SERVICIO";
             }
 
-        }
-
-        public string getConnString(string tsAmbiente)
-        {
-            string lstrServidor = string.Empty;
-            string lstrEsta = string.Empty;
-            string lsrtLine = string.Empty;
-            string lstrHost = string.Empty;
-            string lstrPort = string.Empty;
-            string lstrUser = string.Empty;
-            string lstrPass = string.Empty;
-            string lstrConn = string.Empty;
-            string lsNombreArchivo = "";
-
-            StreamReader loReader;
-
-            if (File.Exists(lsNombreArchivo))
-                loReader = new StreamReader(lsNombreArchivo);
-            else
-            {
-                lsNombreArchivo = "";
-
-                if (File.Exists(lsNombreArchivo))
-                    loReader = new StreamReader(lsNombreArchivo);
-                else
-                    throw new ApplicationException("No se encontró el archivo de conexiones en la ruta: " + lsNombreArchivo);
-            }
-
-            int lintNum = 0;
-
-            do
-            {
-                lsrtLine = loReader.ReadLine();
-                if (!string.IsNullOrEmpty(lsrtLine))
-                {
-                    string[] words = lsrtLine.Split(new char[] { '|' });
-                    if (words.Length == 7)
-                    {
-                        lstrEsta = words[6].Trim();
-                        lstrServidor = words[1].Trim();
-
-                        if (lstrEsta == "ACTIVO" && tsAmbiente == lstrServidor)
-                        {
-                            lintNum += 1;
-
-                            lstrHost = words[2].Trim();
-                            lstrPort = words[3].Trim();
-                            lstrUser = words[4].Trim();
-                            lstrPass = words[5].Trim();
-
-                            break;
-                        }
-                    }
-                }
-            }
-            while (!string.IsNullOrEmpty(lsrtLine));
-
-            if (lintNum == 0)
-            {
-                throw new ApplicationException("No se encontró ninguna cadena Activa para el ambiente "
-                        + tsAmbiente + ". Revisar validar con el Administrador de Conexiones.");
-            }
-            else if (lintNum == 1)
-            {
-                lstrConn = "SERVER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=" + lstrHost + ")(PORT=" + lstrPort + "))(CONNECT_DATA=(SERVICE_NAME=" + lstrServidor + ")));uid=" + lstrUser + "; pwd=" + lstrPass + "";
-            }
-            else
-            {
-                lstrConn = string.Empty;
-                throw new ApplicationException("Se encontró más de una cadena de conexión activa."
-                                            + " Favor de Validar con el Administrador de Conexiones");
-            }
-
-            loReader.Close();
-
-            return lstrConn;
-        }
-
-        public static string Decrypt_sha(string cipherText)
-            {
-                string passPhrase = "KAaz20*50";
-                string saltValue = "SifitT_7";
-                string hashAlgorithm = "SHA1";
-
-                int passwordIterations = 2;
-                string initVector = "@1B2c3D4e5F6g7H8";
-                int keySize = 256;
-                // Convert strings defining encryption key characteristics into byte
-                // arrays. Let us assume that strings only contain ASCII codes.
-                // If strings include Unicode characters, use Unicode, UTF7, or UTF8
-                // encoding.
-                byte[] initVectorBytes = Encoding.ASCII.GetBytes(initVector);
-                byte[] saltValueBytes = Encoding.ASCII.GetBytes(saltValue);
-
-                // Convert our ciphertext into a byte array.
-                byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
-
-                // First, we must create a password, from which the key will be 
-                // derived. This password will be generated from the specified 
-                // passphrase and salt value. The password will be created using
-                // the specified hash algorithm. Password creation can be done in
-                // several iterations.
-                PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, saltValueBytes, hashAlgorithm, passwordIterations);
-
-                // Use the password to generate pseudo-random bytes for the encryption
-                // key. Specify the size of the key in bytes (instead of bits).
-                byte[] keyBytes = password.GetBytes(keySize / 8);
-
-                // Create uninitialized Rijndael encryption object.
-                RijndaelManaged symmetricKey = new RijndaelManaged();
-
-                // It is reasonable to set encryption mode to Cipher Block Chaining
-                // (CBC). Use default options for other symmetric key parameters.
-                symmetricKey.Mode = CipherMode.CBC;
-
-                // Generate decryptor from the existing key bytes and initialization 
-                // vector. Key size will be defined based on the number of the key 
-                // bytes.
-                ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
-
-                // Define memory stream which will be used to hold encrypted data.
-                MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
-
-                // Define cryptographic stream (always use Read mode for encryption).
-                CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-
-                // Since at this point we don't know what the size of decrypted data
-                // will be, allocate the buffer long enough to hold ciphertext;
-                // plaintext is never longer than ciphertext.
-                byte[] plainTextBytes = new byte[cipherTextBytes.Length - 1 + 1];
-
-                // Start decrypting.
-                int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
-
-                // Close both streams.
-                memoryStream.Close();
-                cryptoStream.Close();
-
-                // Convert decrypted data into a string. 
-                // Let us assume that the original plaintext string was UTF8-encoded.
-                string plainText = Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
-
-                // Return decrypted string.   
-                return plainText;
-            }       
+        }       
     }
 }
