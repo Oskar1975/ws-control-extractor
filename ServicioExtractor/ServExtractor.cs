@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EntiExtractor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -94,7 +95,7 @@ namespace ServicioExtractor
                 //Recorremos las tareas y determinamos cual se debe ejecutar
                 foreach(DataRow loRow in LoDtTareas.Rows)
                 { 
-                    if(estaCorriendoExtrac(int.Parse(loRow["IdConfExtraccion"].ToString())))
+                    if(estaCorriendoExtrac(Convert.ToInt32(loRow["IdConfExtraccion"])))
                         continue;
                   
                     if (DetenerProceso)
@@ -102,7 +103,7 @@ namespace ServicioExtractor
 
                     //Asignamos la tarea
                     System.Threading.Thread loTarea = new System.Threading.Thread(EjecutaProceso);
-                    creaExtrac(int.Parse(loRow["IdConfExtraccion"].ToString()));
+                    creaExtrac(Convert.ToInt32(loRow["IdConfExtraccion"]));
 
                     loTarea.IsBackground = true;
                     loTarea.CurrentCulture = new System.Globalization.CultureInfo("es-MX");
@@ -125,41 +126,100 @@ namespace ServicioExtractor
 
         private void EjecutaProceso(object toIdConfExtraccion)
         {            
-            string lsMensaje = string.Empty;
-            object loConfExtra = null;
+            string lsMensaje = string.Empty;            
+            int liHilosVivos = 0;
             System.Threading.Thread[] Colhilos = new System.Threading.Thread[50];
+            bEntiConfExtra loConfExtra =  new bEntiConfExtra(); ;
+            bEntiServExtractor loServExtrac;
+            bEntiDatosExtract loDatosExtract;
+            bEntiDatosEntrada loDatoEntrada;
+            bEntiConfParEmpresa loParamEmpresa;                     
+            bEntiConfParametro loConfParametro;
 
             try
-            {
-                //Buscar la información de la configuración de extracción
+            {                
+                loDatosExtract = new bEntiDatosExtract();
+                loDatoEntrada = new bEntiDatosEntrada();
+                loConfParametro = new bEntiConfParametro();
+                loParamEmpresa = new bEntiConfParEmpresa();
 
+                //Buscar la información de la configuración de extracción
+                loConfExtra.RowNumber = Convert.ToInt32(toIdConfExtraccion);
 
                 //Buscar la información de datos de extracción a partir de la configuración de extracción
-                DataTable laDatosExtract = new DataTable();
+                loDatosExtract.IdConfExtraccion = loConfExtra.RowNumber;
+                List< bEntiDatosExtract> laDatosExtract = new List<bEntiDatosExtract>();
 
                 //Buscar la lista de configuración de empresas para la extracción a partir de la configuración de la extracción
-                DataTable laParamEmpresa = new DataTable();
+                loParamEmpresa.IdConfExtraccion = loConfExtra.RowNumber;
+                List<bEntiConfParEmpresa> laParamEmpresa = new List<bEntiConfParEmpresa>();
 
-                foreach (DataRow loDatosExtract in laDatosExtract.Rows)
+                //Guardamos la cabecera del log
+                loServExtrac = new bEntiServExtractor();
+                loServExtrac.Estatus = "ACTIVO";
+                loServExtrac.FechaEvento = DateTime.Now;
+                loServExtrac.HoraEvento = DateTime.Now;
+                loServExtrac.EstusEvento = bEntiServExtractor.lnEstusEvento.Procesado;
+                loServExtrac.FechaConfigurador = DateTime.Now; //loConfExtra.ProximaFecha.Date;
+                loServExtrac.HoraConfigurador = DateTime.Now; //loConfExtra.HoraExtraccion;
+                loServExtrac.IdConfExtraccion = 0; //loConfExtra.RowNumber;
+                loServExtrac.RowNumber = 0;
+                loServExtrac.FolioEvento = 0;
+                loServExtrac.ClaveLogin = ""; //loConfExtra.ClaveLogin;
+                
+                /*
+                if (!guardarloServExtrac())
                 {
-                    if (loDatosExtract["COD_ESTATUS"].ToString().ToUpper() != "ACTIVO")
+                    string lsErr = "No se pudo guardar el evento de extraccion: "
+                    + "\n IdConfExtraccion=" + loConfExtra.RowNumber.ToString()
+                    + "\nFecha Configurador=" + String.Format(loConfExtra.ProximaFecha,
+                        "dd/MM/yyyy")
+                    + "\nHora Extracción=" + String.Format(loConfExtra.HoraExtraccion, 
+                        "HH:mm ss") + "\nMotivo:" + "Error";
+
+                    validarError(0, lsErr,"AMBIENTE", "Error");
+                    EnviaCorreo("No se pudo guardar el evento de extraccion", _
+                    + "\nNo se pudo guardar el evento de extraccion: "
+                    + "\nIdConfExtraccion=" + loConfExtra.RowNumber.ToString()
+                    + "Fecha Configurador=" + String.Format(loConfExtra.ProximaFecha,
+                    "dd/MM/yyyy") 
+                    + "\nHora Extracción=" & String.Format(loConfExtra.HoraExtraccion, 
+                    "HH:mm ss") + "\nMotivo:" + "Error", true);
+                    return;
+                }
+                else
+                {
+                    //Actualizamos el folio del evento
+                    loServExtrac.FolioEvento = loServExtrac.RowNumber;
+
+                    actualizarloServExtrac();
+                }
+                */                
+
+                foreach (bEntiDatosExtract loTmpDatosExtract in laDatosExtract)
+                {
+                    if (loTmpDatosExtract.Estatus.ToUpper() != "ACTIVO")
                         return;
 
                     if (DetenerProceso)
                         return;
 
-                    foreach(DataRow loParamEmpresa in laParamEmpresa.Rows)
+                    foreach (bEntiConfParEmpresa loTmpParamEmpresa in laParamEmpresa)
                     {
-                        if (loParamEmpresa["COD_ESTATUS"].ToString().ToUpper() != "ACTIVO")
+                        //Por cada parametro de empresa, ejecutamos un subproceso
+                        if (loTmpParamEmpresa.Estatus.ToUpper() != "ACTIVO")
                             return;
 
                         if (DetenerProceso)
                             return;
 
+                        //Buscamos su Dato de Entrada
+                        loDatoEntrada.RowNumber = loTmpDatosExtract.IdDatosEntrada;
+
                         do
                         {
                             //Asignamos la solicitud al hilo disponible
-                            for (int hilo = 0; hilo < 50 -1; hilo++)
+                            for (int hilo = 0; hilo < 50 - 1; hilo++)
                             {
                                 if (DetenerProceso)
                                     return;
@@ -171,13 +231,13 @@ namespace ServicioExtractor
                                     Colhilos[hilo].CurrentCulture = new System.Globalization.CultureInfo("es-MX");
                                     Colhilos[hilo].CurrentUICulture = new System.Globalization.CultureInfo("es-MX");
 
-                                    ParamSubProceso loParamSubProceso = new ParamSubProceso();
-                                    loParamSubProceso.oServExtracDet = new DataTable();
+                                    bEntiParamSubProceso loParamSubProceso = new bEntiParamSubProceso();
+                                    loParamSubProceso.oServExtracDet = new bEntiServExtractorDet();
 
-                                    loParamSubProceso.IdConfExtraccion = 1; //loConfExtra.RowNumber
+                                    loParamSubProceso.IdConfExtraccion = loConfExtra.RowNumber;
                                     loParamSubProceso.Ambiente = ""; //DataBase.Ambiente;
-                                    loParamSubProceso.ClaveEmpresa = ""; //loParamEmpresa.ClaveEmpresa;
-                                    loParamSubProceso.CveDatoEntrada = ""; //loDatoEntrada.Clave;
+                                    loParamSubProceso.ClaveEmpresa = loTmpParamEmpresa.ClaveEmpresa;
+                                    loParamSubProceso.CveDatoEntrada = loDatoEntrada.Clave;
                                     /*
                                     if(loConfParametro.TipoEjercicio =  ConfParametro.lnTipoEjercicio.Fijo)
                                         loParamSubProceso.Ejercicio = loConfParametro.EjercicioAnio;
@@ -191,33 +251,51 @@ namespace ServicioExtractor
                                         loConfParametro.TipoPeriodo);
                                     */
 
-                                    loParamSubProceso.Usuario = ""; // loConfExtra.ClaveLogin
+                                    loParamSubProceso.Usuario = loConfExtra.ClaveLogin;
 
-                                    loParamSubProceso.oServExtracDet.Rows[0][0] = ""; // loConfExtra.ClaveLogin
-                                    loParamSubProceso.oServExtracDet.Rows[0][1] = ""; // loParamEmpresa.ClaveEmpresa
-                                    loParamSubProceso.oServExtracDet.Rows[0][2] = ""; // Estado_T.ACTIVO
-                                    loParamSubProceso.oServExtracDet.Rows[0][3] = ""; // ServExtractDet.lnEstusEvento.EnEjecucion
-                                    loParamSubProceso.oServExtracDet.Rows[0][4] = ""; // Now.Date Fecha Alta
-                                    loParamSubProceso.oServExtracDet.Rows[0][5] = ""; // Now.Date Fecha Evento
-                                    loParamSubProceso.oServExtracDet.Rows[0][6] = ""; // New Date(1900, 1, 1, Now.Hour, Now.Minute, Now.Second) Hora Alta
-                                    loParamSubProceso.oServExtracDet.Rows[0][7] = ""; // .GeneroAlarma = False
-                                    loParamSubProceso.oServExtracDet.Rows[0][8] = ""; //.HoraEvento = New Date(1900, 1, 1,Now.Hour, Now.Minute, Now.Second)
-                                    loParamSubProceso.oServExtracDet.Rows[0][9] = ""; //.IdAlarma = 0
-                                    loParamSubProceso.oServExtracDet.Rows[0][10] = ""; //.IdDatosEntrada = loDatoEntrada.RowNumber
-                                    loParamSubProceso.oServExtracDet.Rows[0][11] = ""; //.IdEmpresa = loParamEmpresa.IdEmpresa
-                                    loParamSubProceso.oServExtracDet.Rows[0][12] = ""; //.IdServExt = loServExtrac.RowNumber
-                                    loParamSubProceso.oServExtracDet.Rows[0][13] = ""; //.Mensaje = String.Empty
-                                    loParamSubProceso.oServExtracDet.Rows[0][14] = ""; //.NumEjercicio = loParamSubProceso.Ejercicio
-                                    loParamSubProceso.oServExtracDet.Rows[0][15] = ""; //.NumPeriodo = loParamSubProceso.Periodo
-                                    
+                                    loParamSubProceso.oServExtracDet.ClaveLogin = loConfExtra.ClaveLogin;
+                                    loParamSubProceso.oServExtracDet.ClaveEmpresa = loTmpParamEmpresa.ClaveEmpresa;
+                                    loParamSubProceso.oServExtracDet.Estatus = "ACTIVO";
+                                    loParamSubProceso.oServExtracDet.EstusEvento = bEntiServExtractorDet.lnEstusEvento.EnEjecucion; 
+                                    loParamSubProceso.oServExtracDet.FechaAlta = DateTime.Now; 
+                                    loParamSubProceso.oServExtracDet.FechaEvento = DateTime.Now; 
+                                    loParamSubProceso.oServExtracDet.HoraAlta = DateTime.Now; 
+                                    loParamSubProceso.oServExtracDet.GeneroAlarma = false;
+                                    loParamSubProceso.oServExtracDet.HoraEvento = DateTime.Now;
+                                    loParamSubProceso.oServExtracDet.IdAlarma = 0;
+                                    loParamSubProceso.oServExtracDet.IdDatosEntrada = loDatoEntrada.RowNumber;
+                                    loParamSubProceso.oServExtracDet.IdEmpresa = loTmpParamEmpresa.IdEmpresa;
+                                    loParamSubProceso.oServExtracDet.IdServExt = loServExtrac.RowNumber;
+                                    loParamSubProceso.oServExtracDet.Mensaje = string.Empty;
+                                    loParamSubProceso.oServExtracDet.NumEjercicio = loParamSubProceso.Ejercicio;
+                                    loParamSubProceso.oServExtracDet.NumPeriodo = loParamSubProceso.Periodo;
+
                                     Colhilos[hilo].Start(loParamSubProceso);
                                     break;
                                 }
-                            }                         
-                               
-                        } while (true) ;
+                            }
+
+                        } while (true);
+                    }
                 }
-                }               
+
+
+                //Esperamos a que todos los hilos terminen
+                do
+                {
+                    liHilosVivos = 0;
+                    for (int liHilo = 0; liHilo < 50; liHilo++)
+                    {
+                        if (Colhilos[liHilo] != null &&
+                            Colhilos[liHilo].IsAlive)
+                            liHilosVivos += 1;                        
+                    }
+                    if (liHilosVivos == 0)
+                        break;
+
+                    //Esperamos un momento
+                    System.Threading.Thread.Sleep(2000);
+                } while (true);
 
             }
             catch (OracleException ex)
@@ -228,7 +306,7 @@ namespace ServicioExtractor
             {
                 int liIdConfExtraccion = 0;
                 if (loConfExtra != null)
-                    //liIdConfExtraccion = loConfExtra.RowNumber;
+                    liIdConfExtraccion = loConfExtra.RowNumber;
 
                 validarError(0, "Error al ejecutar proceso. " + ex.Message, "", ex.Message);
 
@@ -238,13 +316,136 @@ namespace ServicioExtractor
             }
             finally
             {
-                finalizaExtrac(int.Parse(toIdConfExtraccion.ToString()));
+                finalizaExtrac(Convert.ToInt32(toIdConfExtraccion));
             }    
         }
 
         private void EjecutaSubProceso(object toParamSubProceso)
         {
+            string lsMsgError = string.Empty;
+            bEntiParamSubProceso loParamEntrada = (bEntiParamSubProceso)toParamSubProceso;
 
+            try
+            {
+                if (DetenerProceso)
+                    return;
+
+                loParamEntrada.oServExtracDet.FechaEvento = DateTime.Now;
+                loParamEntrada.oServExtracDet.HoraEvento = DateTime.Now;
+
+                //Guardar los datos del loParamEntrada.oServExtracDet en la Base de Datos
+
+
+                //verificar los parametros y la empresa si es cloud o no                
+                // loParamEntrada.ClaveEmpresa 
+                if(true)
+                {
+                    //si es cloud se invoca los wsdl
+
+
+                    //si no es cloud se invocan los packages del EBS
+                    if (ejecutarEBS(ref lsMsgError))
+                    {
+                        loParamEntrada.oServExtracDet.EstusEvento = bEntiServExtractorDet.lnEstusEvento.Procesado;
+                        loParamEntrada.oServExtracDet.Mensaje = string.Empty;
+                    }
+                    else
+                    {
+                        string lsErr = "Error al ejecutar subproceso. " + lsMsgError;
+
+                        if (lsMsgError.Contains("1017"))
+                            validarError(1017, lsErr, loParamEntrada.Ambiente, lsMsgError);
+                        else if (lsMsgError.Contains("2800"))
+                            validarError(2800, lsErr, loParamEntrada.Ambiente, lsMsgError);
+                        else if (lsMsgError.Contains("12541"))
+                            validarError(12541, lsErr, loParamEntrada.Ambiente, lsMsgError);
+                        else
+                            validarError(0, lsErr, loParamEntrada.Ambiente, lsMsgError);
+
+                        //Marcamos error
+                        loParamEntrada.oServExtracDet.EstusEvento = bEntiServExtractorDet.lnEstusEvento.ProcesadoError;
+                        loParamEntrada.oServExtracDet.Mensaje = lsMsgError;
+                    }
+                }                
+
+                loParamEntrada.oServExtracDet.FechaFinEvento = DateTime.Now;
+                loParamEntrada.oServExtracDet.HoraFinEvento = DateTime.Now;
+
+                //Acumulamos los Errores
+                if (loParamEntrada.oServExtracDet.EstusEvento !=
+                    bEntiServExtractorDet.lnEstusEvento.Procesado)
+                    acumulaErroresExtrac(loParamEntrada.IdConfExtraccion);
+
+                //if (loParamEntrada.oServExtracDet.Update)
+                {
+                    validarError(0, "error",
+                        loParamEntrada.Ambiente, "error");
+                    //EnviaCorreo("Proceso extracción",
+                    //"Se presentó una falla inesperada al intentar actualizar "
+                    //+ "el estatus de la extracción.\n"
+                    //+ "IdConfExtraccion=" + loParamEntrada.IdConfExtraccion +
+                    //"EstatusEvento=" + loParamEntrada.oServExtracDet.EstusEvento.ToString()
+                    //+ "\nMotivo:"
+                    //+ loParamEntrada.oServExtracDet.Mapper.LastError +
+                    //+"\nAmbiente:" +
+                    //loParamEntrada.Ambiente, true);
+                }
+
+
+                //Por último enviamos la alarma
+                //Falta definición de alarma
+                if (loParamEntrada.oServExtracDet.EstusEvento !=
+                    bEntiServExtractorDet.lnEstusEvento.Procesado)
+                {
+                    string lsErr = "Error al procesar: " + loParamEntrada.oServExtracDet.Mensaje;
+                    validarError(0, lsErr, loParamEntrada.Ambiente, loParamEntrada.oServExtracDet.Mensaje);
+                    //EnviaCorreo("Alarma: Proceso extracción",
+                    //"Se presentó una falla en el proceso de extraccion.\n"
+                    //+ "Folio Evento=" + loParamEntrada.IdConfExtraccion.ToString()
+                    //+ "\nEjercicio=" + loParamEntrada.oServExtracDet.NumEjercicio.ToString()
+                    //+ "\nPeriodo=" + loParamEntrada.oServExtracDet.NumPeriodo.ToString()
+                    //+ "\nClave Emprresa=" + loParamEntrada.oServExtracDet.ClaveEmpresa
+                    //+ "\nMotivo:" + loParamEntrada.oServExtracDet.Mensaje
+                    //+ "\nAmbiente:" + loParamEntrada.Ambiente, false);
+                }
+
+
+            }
+            catch (OracleException ex)
+            {
+                validarError(ex.Code, ex.Message, "", ex.Message);
+            }
+            catch (Exception ex)
+            {
+                validarError(0, "Error al ejecutar subproceso. " + ex.Message, "", ex.Message);
+
+                //EnviaCorreo("Proceso extracción","Se presentó una falla inesperada en la extraccion de datos.\n"
+                // + "Motivo: " + ex.Message + "\n" +
+                // "Ambiente: ", true);
+            }
+          
+        }
+
+        private void EnviaCorreo(string v1, object p, bool v2)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool ejecutarEBS(ref string tsMsjError)
+        {
+            return true;
+        }
+
+        private void acumulaErroresExtrac(int tiIdConfExtraccion)
+        {
+            lock (TablaLock)
+            {
+                DataRow[] loFilas;
+
+                loFilas = ProcesosCorriendo.Select("IdConfExtraccion=" + tiIdConfExtraccion.ToString());
+                if (loFilas.Length > 0)
+                    loFilas[0]["TotalFallas"] = System.Convert.ToInt32(loFilas[0]["TotalFallas"]) + 1;
+            }
         }
 
         private void creaExtrac(int tiIdConfExtraccion)

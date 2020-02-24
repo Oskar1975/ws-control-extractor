@@ -41,8 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="bEntiConfExtra.cs" />
+    <Compile Include="bEntiConfParametro.cs" />
+    <Compile Include="bEntiConfParEmpresa.cs" />
     <Compile Include="bEntiDatoEntrada.cs" />
+    <Compile Include="bEntiDatosEntrada.cs" />
+    <Compile Include="bEntiDatosExtract.cs" />
     <Compile Include="bEntiEmpresa.cs" />
+    <Compile Include="bEntiParamSubProceso.cs" />
+    <Compile Include="bEntiServExtractorDet.cs" />
+    <Compile Include="bEntiServExtractor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

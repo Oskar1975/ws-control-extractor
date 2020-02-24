@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ParamSubProceso.cs" />
     <Compile Include="ServExtractor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -52,6 +51,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntiExtractor\EntiExtractor.csproj">
+      <Project>{deae789c-4f30-44fd-8447-72acf6da8e59}</Project>
+      <Name>EntiExtractor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
